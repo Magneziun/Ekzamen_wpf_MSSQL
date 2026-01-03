@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using P_320_CompanyBD_Dagirov.Models;
-
 namespace P_320_CompanyBD_Dagirov.DataLayer
 {
     public class DL
@@ -166,7 +165,6 @@ namespace P_320_CompanyBD_Dagirov.DataLayer
             List<BookModel> books = Book_ALL_Model();
 
             // Заголовок таблицы
-            Console.WriteLine("ID   | Название книги                 | Страниц | Цена     | Дата публикации | Авт | Тем");
 
 
             // Выводим книги
@@ -174,16 +172,13 @@ namespace P_320_CompanyBD_Dagirov.DataLayer
             {
                 // Форматируем вывод как в CustomerModel
                 string name = book.Name.Length > 30 ? book.Name.Substring(0, 27) + "..." : book.Name;
+
+
                 Console.WriteLine($"{book.Id.ToString().PadRight(4)} | {name.PadRight(30)} | " +
                                   $"{book.Pages.ToString().PadRight(7)} | {book.Price.ToString().PadRight(8)} | " +
                                   $"{book.PublishDate.ToShortDateString().PadRight(15)} | " +
                                   $"{book.AuthorId.ToString().PadRight(3)} | {book.ThemeId.ToString().PadRight(6)}");
             }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nДля продолжения нажмите любую клавишу");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.ReadKey();
         }
 
         // Обновленный Book_ByID - теперь использует BookModel

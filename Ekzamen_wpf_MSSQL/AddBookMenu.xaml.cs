@@ -10,28 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using P_320_CompanyBD_Dagirov.DataLayer;
-using P_320_CompanyBD_Dagirov.Models;
+
 namespace Ekzamen_wpf_MSSQL
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для AddBookMenu.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class AddBookMenu : Window
     {
-        public MainWindow()
+        public AddBookMenu()
         {
-            
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var AddB= new AddBookMenu();
-            AddB.Show();
-            AddB.IsEnabled = true;
         }
     }
 }

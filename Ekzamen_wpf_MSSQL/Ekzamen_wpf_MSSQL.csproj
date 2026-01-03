@@ -56,10 +56,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="AddBookMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="AddBookMenu.xaml.cs">
+      <DependentUpon>AddBookMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -97,7 +104,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Assets\1c6a2eb3c8032b714ba0e133ba0040bb.jpg" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="—Pngtree—purple transparent cartoon clouds_4281955.png" />
   </ItemGroup>
@@ -106,6 +115,20 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\1878d50e9f4250acce01003049c3624c.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\загруженное.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\cf428726cc6fc4ab13a6689e6d098406.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\♥︎ 𝐋𝐂𝐕𝐄𝐑𝐗𝐋𝐓 𓂅.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Overlay dotted.jpg" />
+    <Resource Include="Assets\загруженное %281%29.jpg" />
+    <Resource Include="Assets\загруженное %282%29.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

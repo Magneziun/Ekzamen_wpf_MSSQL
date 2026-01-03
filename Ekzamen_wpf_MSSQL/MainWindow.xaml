@@ -5,37 +5,71 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ekzamen_wpf_MSSQL"
         mc:Ignorable="d"
-        Title="Book Shop Manager            by MagneziumDev" Height="450" Width="900" 
-        MinHeight="450" MinWidth="900" Icon="/Assets/1878d50e9f4250acce01003049c3624c.ico"
+        Title="Book Shop Manager            by MagneziumDev" Height="496" Width="951" 
+        MinHeight="450" MinWidth="900" Icon="/Assets/1878d50e9f4250acce01003049c3624c.ico" WindowStartupLocation="CenterScreen"
         
         >
     <Window.Background>
         <ImageBrush
-        ImageSource="Assets/db8a311eab622937b3cadf54cdbf781f.jpg"   
+        ImageSource="/Assets/Overlay dotted.jpg"   
         TileMode="Tile"
         ViewportUnits="Absolute"
-        Viewport="0,0,500,500" />
+        Viewport="0,0,500,500" >
+            <ImageBrush.RelativeTransform>
+                <TransformGroup>
+                    <ScaleTransform CenterY="0.5" CenterX="0.5" ScaleX="1"/>
+                    <SkewTransform CenterX="0.5" CenterY="0.5"/>
+                    <RotateTransform CenterX="0.5" CenterY="0.5" Angle="1433.48"/>
+                    <TranslateTransform X="5" Y="5"/>
+                </TransformGroup>
+            </ImageBrush.RelativeTransform>
+        </ImageBrush>
     </Window.Background>
-    <Grid>
+    <Grid Background="#4C000000">
         <Grid.RowDefinitions>
-            <RowDefinition Height="37*"/>
-            <RowDefinition Height="27*"/>
-            <RowDefinition Height="370*"/>
+            <RowDefinition/>
+            <RowDefinition Height="48.004"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50*" MinWidth="30"/>
-            <ColumnDefinition Width="129*"/>
+            <ColumnDefinition Width="27*" MinWidth="30"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="717*" MinWidth="30"/>
+            <ColumnDefinition Width="85*" MinWidth="30"/>
+            <ColumnDefinition Width="162.766"/>
         </Grid.ColumnDefinitions>
-        <GridSplitter Grid.Column="2" 
+        <GridSplitter Grid.Column="1" 
                       ShowsPreview="False" 
                       Width="4"
                       HorizontalAlignment="Center" 
-                      Background="#4C6A6A6A" Grid.RowSpan="3"/>
-        <DataGrid x:Name="DataGridBook" Grid.Column="3" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="4,1,10,10" Background="#4CF0F0F0" Grid.RowSpan="2" Grid.Row="1"/>
-        <Label Content="Консоль" Margin="4,30,6,0" VerticalAlignment="Top" Height="28" Foreground="White" FontSize="16" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-        <Label Grid.Column="3" Content="Все книги в магазине" Margin="4,7,534,1" Foreground="White" FontSize="16"/>
-        <TextBlock x:Name="Console_Shop" Margin="4,0,6,10" TextWrapping="Wrap" Text="подробные логи и результат работы воводится в этом поле" Grid.RowSpan="2" Background="#4CF0F0F0" Foreground="White" FontFamily="Consolas" AllowDrop="True" Grid.ColumnSpan="2" Height="360" VerticalAlignment="Bottom" Grid.Row="1"/>
+                      Background="#4C6A6A6A" Grid.RowSpan="2"/>
+        <DataGrid x:Name="DataGridBook" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="4,48,23,0" Background="#66F0F0F0" Grid.ColumnSpan="2" BorderBrush="#FFA6A6A6"/>
+        <Label Content="Консоль" Margin="5,4,5,0" Foreground="White" FontSize="33" RenderTransformOrigin="0.465,-0.567" FontFamily="Bahnschrift Condensed" Padding="0,0,0,0" Height="42" VerticalAlignment="Top"/>
+        <Label Grid.Column="2" Content="Все книги в магазине" Margin="6,4,0,0" Foreground="White" FontSize="32" FontFamily="Bahnschrift Condensed" HorizontalAlignment="Left" Width="237" Padding="0,0,0,5" Height="39" VerticalAlignment="Top"/>
+
+        <Border 
+                Margin="4,51,6,10" CornerRadius="8" Background="#66F0F0F0" Grid.RowSpan="2">
+            <TextBlock x:Name="Console_Shop" 
+                       TextWrapping="Wrap" 
+                       Text="подробные логи и результат работы выводится в этом поле" 
+                       Foreground="White" 
+                       FontFamily="Consolas" 
+                       AllowDrop="True"
+                       Margin="5,10,5,5"/>
+        </Border>
+
+        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Margin="0,48,0,338" Grid.ColumnSpan="2" />
+
+        <Button Grid.Column="3" Content="Добавить книгу" Margin="18,0,23,0" Background="#FE3B3B3B" Foreground="White" BorderBrush="#FFCBCACA" Grid.Row="1" Click="Button_Click" FontFamily="Bahnschrift Condensed" FontSize="16" Height="29" VerticalAlignment="Center">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border CornerRadius="5"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
     </Grid>
 </Window>
