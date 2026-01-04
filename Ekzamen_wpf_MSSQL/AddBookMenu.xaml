@@ -27,7 +27,10 @@
         <TextBox x:Name="Name" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="1" TextWrapping="Wrap" Text=" " VerticalAlignment="Center" Width="410" Height="29" FontSize="20" IsReadOnlyCaretVisible="True">
             <TextBox.Template>
                 <ControlTemplate TargetType="TextBox">
-                    <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border CornerRadius="5" 
+                      Background="#4CFFFFFF" 
+                      BorderBrush="Gray" 
+                      BorderThickness="1">
                         <ScrollViewer x:Name="PART_ContentHost"/>
                     </Border>
                 </ControlTemplate>
@@ -36,7 +39,10 @@
         <TextBox x:Name="Pages_Count" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="2" TextWrapping="Wrap" Text=" " VerticalAlignment="Center" Width="410" Height="29" FontSize="20" IsReadOnlyCaretVisible="True">
             <TextBox.Template>
                 <ControlTemplate TargetType="TextBox">
-                    <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border CornerRadius="5" 
+                      Background="#4CFFFFFF" 
+                      BorderBrush="Gray" 
+                      BorderThickness="1">
                         <ScrollViewer x:Name="PART_ContentHost"/>
                     </Border>
                 </ControlTemplate>
@@ -45,7 +51,10 @@
         <TextBox x:Name="Price" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="3" TextWrapping="Wrap" Text=" " VerticalAlignment="Center" Width="410" Height="29" FontSize="20" IsReadOnlyCaretVisible="True">
             <TextBox.Template>
                 <ControlTemplate TargetType="TextBox">
-                    <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border CornerRadius="5" 
+                      Background="#4CFFFFFF" 
+                      BorderBrush="Gray" 
+                      BorderThickness="1">
                         <ScrollViewer x:Name="PART_ContentHost"/>
                     </Border>
                 </ControlTemplate>
@@ -54,7 +63,10 @@
         <TextBox x:Name="AuthorID" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="4" TextWrapping="Wrap" Text=" " VerticalAlignment="Center" Width="410" Height="29" FontSize="20" IsReadOnlyCaretVisible="True">
             <TextBox.Template>
                 <ControlTemplate TargetType="TextBox">
-                    <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border CornerRadius="5" 
+                      Background="#4CFFFFFF" 
+                      BorderBrush="Gray" 
+                      BorderThickness="1">
                         <ScrollViewer x:Name="PART_ContentHost"/>
                     </Border>
                 </ControlTemplate>
@@ -63,7 +75,10 @@
         <TextBox x:Name="Theme_ID" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="5" TextWrapping="Wrap" Text=" " VerticalAlignment="Center" Width="410" Height="29" FontSize="20" IsReadOnlyCaretVisible="True">
             <TextBox.Template>
                 <ControlTemplate TargetType="TextBox">
-                    <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border CornerRadius="5" 
+                      Background="#4CFFFFFF" 
+                      BorderBrush="Gray" 
+                      BorderThickness="1">
                         <ScrollViewer x:Name="PART_ContentHost"/>
                     </Border>
                 </ControlTemplate>

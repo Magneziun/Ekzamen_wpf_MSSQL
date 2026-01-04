@@ -12,13 +12,6 @@ namespace Ekzamen_wpf_MSSQL
             // Устанавливаем текущую дату как значение по умолчанию
             var today = DateTime.Today;
 
-            // Очищаем текстбоксы
-            Name.Text = "";
-            Pages_Count.Text = "";
-            Price.Text = "";
-            AuthorID.Text = "";
-            Theme_ID.Text = "";
-
             // Устанавливаем фокус
             Name.Focus();
         }
@@ -54,9 +47,9 @@ namespace Ekzamen_wpf_MSSQL
             }
 
             // Проверка количества страниц
-            if (!int.TryParse(Pages_Count.Text, out int pages) || pages <= 0 || pages > 5000)
+            if (!int.TryParse(Pages_Count.Text, out int pages) || pages <= 0)
             {
-                MessageBox.Show("Введите корректное количество страниц (1-5000)", "Ошибка",
+                MessageBox.Show("Введите корректное количество страниц", "Ошибка",
                               MessageBoxButton.OK, MessageBoxImage.Error);
                 Pages_Count.Focus();
                 return false;

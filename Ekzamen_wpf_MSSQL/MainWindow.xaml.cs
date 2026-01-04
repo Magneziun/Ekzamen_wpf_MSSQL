@@ -219,6 +219,7 @@ namespace Ekzamen_wpf_MSSQL
             }
         }
 
+        //кнопка измененние цены
         private void BtnUpdatePrice_Click(object sender, RoutedEventArgs e)
         {
             //если книга не выбрана проверка
@@ -304,7 +305,7 @@ namespace Ekzamen_wpf_MSSQL
         }
     }
 
-    // Класс для диалога ввода
+    // Класс для диалога ввода изменения цены (не работает)
     public class InputDialog
     {
         public string Answer { get; set; }

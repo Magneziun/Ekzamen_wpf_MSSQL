@@ -50,7 +50,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
         // ============ ОТКЛЮЧЕННЫЙ РЕЖИМ ============
         // (DataTable/DataSet без постоянного соединения)
 
-        // Получение всех книг - отключенный режим
+        // Получение всех книг ( отключенный режим)
         public static DataTable GetAllBooksDisconnected()
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
