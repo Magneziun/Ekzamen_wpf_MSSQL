@@ -1,32 +1,86 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace P_320_CompanyBD_Dagirov.Models
+namespace Ekzamen_wpf_MSSQL.Models
 {
+    [Table("books")]
     public class BookModel
     {
+        [Key]
+        [Column("id")]
         public int Id { get; set; }
+
+        [Column("name")]
+        [Required(ErrorMessage = "Название книги обязательно")]
         public string Name { get; set; }
+
+        [Column("pages")]
         public int Pages { get; set; }
-        public int Price { get; set; }
+
+        [Column("price")]
+        [Required(ErrorMessage = "Цена обязательна")]
+        public decimal Price { get; set; }
+
+        [Column("publish_date")]
+        [DataType(DataType.Date)]
         public DateTime PublishDate { get; set; }
+
+        [Column("author_id")]
+        [Required(ErrorMessage = "ID автора обязателен")]
         public int AuthorId { get; set; }
+
+        [Column("theme_id")]
+        [Required(ErrorMessage = "ID темы обязателен")]
         public int ThemeId { get; set; }
 
-        // Конструктор для использования с индексами массива
-        public BookModel(int id, string name, int pages, int price, DateTime publishDate, int authorId, int themeId)
+        // Конструктор  для DataGrid
+        public BookModel() { }
+
+        // тут короче определяем через конструктор но можно и без
+        public BookModel(string name, int pages, decimal price,
+                        int authorId, int themeId, DateTime? publishDate = null)
         {
-            Id = id;
             Name = name;
             Pages = pages;
             Price = price;
-            PublishDate = publishDate;
             AuthorId = authorId;
             ThemeId = themeId;
+            PublishDate = DateTime.Today; 
         }
 
-        public override string ToString()
+        // Создаем метод чтобы потом проверять на валидность данных которые введем
+        public bool Validate(out string errorMessage)
         {
-            return $"{Id,4} {Name,30} {Pages,6} {Price,8:C} {PublishDate.ToShortDateString(),15} {AuthorId,3} {ThemeId,3}";
+            errorMessage = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(Name))
+                errorMessage = "Название книги обязательно";
+            else if (Pages <= 0)
+                errorMessage = "Количество страниц должно быть положительным";
+            else if (Price <= 0)
+                errorMessage = "Цена должна быть положительной";
+            else if (AuthorId <= 0)
+                errorMessage = "ID автора должен быть положительным";
+            else if (ThemeId <= 0)
+                errorMessage = "ID темы должен быть положительным";
+
+            return string.IsNullOrEmpty(errorMessage);
+        }
+
+        // клонируем чтобы использовать вне
+        public BookModel Clone()
+        {
+            return new BookModel
+            {
+                Id = this.Id,
+                Name = this.Name,
+                Pages = this.Pages,
+                Price = this.Price,
+                PublishDate = this.PublishDate,
+                AuthorId = this.AuthorId,
+                ThemeId = this.ThemeId
+            };
         }
     }
 }

@@ -75,7 +75,7 @@
         <Label Content="Цена" HorizontalAlignment="Center" VerticalAlignment="Center" Height="29" Width="116" FontSize="26" FontFamily="Bahnschrift Condensed" IsEnabled="False" Foreground="White" Grid.Row="3" Padding="0,0,0,0"/>
         <Label Content="ID Автора" HorizontalAlignment="Center" VerticalAlignment="Center" Height="29" Width="116" FontSize="26" FontFamily="Bahnschrift Condensed" IsEnabled="False" Foreground="White" Grid.Row="4" Padding="0,0,0,0"/>
         <Label Content="ID Темы" HorizontalAlignment="Center" VerticalAlignment="Center" Height="29" Width="116" FontSize="26" FontFamily="Bahnschrift Condensed" IsEnabled="False" Foreground="White" Grid.Row="5" Padding="0,0,0,0"/>
-        <Button x:Name="AddButt" Grid.Column="1" Content="Добавить" Margin="241,37,0,16" Background="#FE3B3B3B" Foreground="White" BorderBrush="#FFCBCACA" HorizontalAlignment="Left" Width="179" Grid.Row="6" FontSize="20" FontFamily="Bahnschrift Condensed" Click="Button_Click">
+        <Button x:Name="AddButt" Grid.Column="1" Content="Добавить" Margin="241,37,0,16" Background="#FE3B3B3B" Foreground="White" BorderBrush="#FFCBCACA" HorizontalAlignment="Left" Width="179" Grid.Row="6" FontSize="20" FontFamily="Bahnschrift Condensed" Click="Button_Click" Cursor="Hand">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border CornerRadius="5"
@@ -88,7 +88,7 @@
                 </ControlTemplate>
             </Button.Template>
         </Button>
-        <Button x:Name="ExitBut" Grid.Column="1" Content="Добавить" Margin="10,37,0,16" Background="#FE3B3B3B" Foreground="White" BorderBrush="#FFCBCACA" HorizontalAlignment="Left" Width="179" Grid.Row="6" FontSize="20" FontFamily="Bahnschrift Condensed" Click="Button_Click">
+        <Button x:Name="ExitBut" Grid.Column="1" Content="Отмена" Margin="10,37,0,16" Background="#FE3B3B3B" Foreground="White" BorderBrush="#FFCBCACA" HorizontalAlignment="Left" Width="179" Grid.Row="6" FontSize="20" FontFamily="Bahnschrift Condensed" Click="Button_Click" Cursor="Hand">
             <Button.Template>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border CornerRadius="5"

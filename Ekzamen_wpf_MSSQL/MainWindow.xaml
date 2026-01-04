@@ -5,16 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ekzamen_wpf_MSSQL"
         mc:Ignorable="d"
-        Title="Book Shop Manager            by MagneziumDev" Height="496" Width="951" 
-        MinHeight="450" MinWidth="900" Icon="/Assets/1878d50e9f4250acce01003049c3624c.ico" WindowStartupLocation="CenterScreen"
-        
-        >
+        Title="Book Shop Manager - ADO.NET Hybrid Mode" Height="600" Width="1000" 
+        MinHeight="500" MinWidth="900" Icon="/Assets/1878d50e9f4250acce01003049c3624c.ico" 
+        WindowStartupLocation="CenterScreen">
+
     <Window.Background>
-        <ImageBrush
-        ImageSource="/Assets/Overlay dotted.jpg"   
-        TileMode="Tile"
-        ViewportUnits="Absolute"
-        Viewport="0,0,500,500" >
+        <ImageBrush ImageSource="/Assets/Overlay dotted.jpg"   
+                    TileMode="Tile"
+                    ViewportUnits="Absolute"
+                    Viewport="0,0,500,500">
             <ImageBrush.RelativeTransform>
                 <TransformGroup>
                     <ScaleTransform CenterY="0.5" CenterX="0.5" ScaleX="1"/>
@@ -25,51 +24,294 @@
             </ImageBrush.RelativeTransform>
         </ImageBrush>
     </Window.Background>
+
     <Grid Background="#4C000000">
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="48.004"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="27*" MinWidth="30"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="85*" MinWidth="30"/>
-            <ColumnDefinition Width="162.766"/>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="189"/>
         </Grid.ColumnDefinitions>
-        <GridSplitter Grid.Column="1" 
+
+        <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" 
+                Background="#4C2A2A2A" Margin="5,5,5,5">
+            <StackPanel Margin="10">
+                <Label Content="Управление книгами" 
+                       Foreground="White" 
+                       FontSize="30" 
+                       FontFamily="Bahnschrift Condensed"
+                       HorizontalAlignment="Center"/>
+
+                <Separator Margin="0,10,0,10" Background="Gray"/>
+
+                <Button x:Name="BtnRefresh" Content="Обновить список" 
+                        Margin="0,5" Height="35" 
+                        Background="#FE3B3B3B" Foreground="White"
+                        Click="BtnRefresh_Click"
+                        FontFamily="Bahnschrift Condensed" FontSize="22"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="5"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button x:Name="BtnAddBook" Content="Добавить книгу" 
+                        Margin="0,5" Height="35"
+                        Background="#FE3B3B3B" Foreground="White"
+                        Click="BtnAddBook_Click"
+                        FontFamily="Bahnschrift Condensed" FontSize="22"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="5"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button x:Name="BtnDeleteBook" Content="Удалить выбранную" 
+                        Margin="0,5" Height="35"
+                        Background="#FE3B3B3B" Foreground="White"
+                        Click="BtnDeleteBook_Click"
+                        FontFamily="Bahnschrift Condensed" FontSize="22"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="5"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button x:Name="BtnUpdatePrice" Content="Изменить цену" 
+                        Margin="0,5" Height="35"
+                        Background="#FE3B3B3B" Foreground="White"
+                        Click="BtnUpdatePrice_Click"
+                        FontFamily="Bahnschrift Condensed" FontSize="22"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="5"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Separator Margin="0,20,0,10" Background="Gray"/>
+
+                <TextBlock Text="Статистика:" 
+                          Foreground="White" 
+                          FontSize="16" 
+                          Margin="0,10,0,5"/>
+
+                <StackPanel x:Name="StatsPanel" Margin="10">
+                    <TextBlock x:Name="TxtTotalBooks" Foreground="LightGray" FontSize="12"/>
+                    <TextBlock x:Name="TxtAvgPrice" Foreground="LightGray" FontSize="12"/>
+                    <TextBlock x:Name="TxtTotalPages" Foreground="LightGray" FontSize="12"/>
+                </StackPanel>
+
+                <Separator Margin="0,20,0,10" Background="Gray"/>
+
+                <TextBlock Text="Поиск:" 
+                          Foreground="White" 
+                          FontSize="16" 
+                          Margin="0,10,0,5"/>
+
+                <TextBox x:Name="TxtSearch" 
+                         Height="30" 
+                         Margin="0,5" 
+                         Padding="5"
+                         FontSize="14"
+                         TextChanged="TxtSearch_TextChanged">
+                    <TextBox.Template>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border CornerRadius="5" 
+                                    Background="#4CFFFFFF" 
+                                    BorderBrush="Gray" 
+                                    BorderThickness="1">
+                                <ScrollViewer x:Name="PART_ContentHost"/>
+                            </Border>
+                        </ControlTemplate>
+                    </TextBox.Template>
+                </TextBox>
+
+                <Button Content="Найти" 
+                        Height="30" Margin="0,5"
+                        Click="BtnSearch_Click"
+                        Background="#FE3B3B3B" Foreground="White"
+                        FontFamily="Bahnschrift Condensed" FontSize="22">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="5"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                       ShowsPreview="False" 
                       Width="4"
                       HorizontalAlignment="Center" 
-                      Background="#4C6A6A6A" Grid.RowSpan="2"/>
-        <DataGrid x:Name="DataGridBook" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="4,48,23,0" Background="#66F0F0F0" Grid.ColumnSpan="2" BorderBrush="#FFA6A6A6"/>
-        <Label Content="Консоль" Margin="5,4,5,0" Foreground="White" FontSize="33" RenderTransformOrigin="0.465,-0.567" FontFamily="Bahnschrift Condensed" Padding="0,0,0,0" Height="42" VerticalAlignment="Top"/>
-        <Label Grid.Column="2" Content="Все книги в магазине" Margin="6,4,0,0" Foreground="White" FontSize="32" FontFamily="Bahnschrift Condensed" HorizontalAlignment="Left" Width="237" Padding="0,0,0,5" Height="39" VerticalAlignment="Top"/>
+                      Background="#4C6A6A6A"/>
 
-        <Border 
-                Margin="4,51,6,10" CornerRadius="8" Background="#66F0F0F0" Grid.RowSpan="2">
-            <TextBlock x:Name="Console_Shop" 
-                       TextWrapping="Wrap" 
-                       Text="подробные логи и результат работы выводится в этом поле" 
-                       Foreground="White" 
-                       FontFamily="Consolas" 
-                       AllowDrop="True"
-                       Margin="5,10,5,5"/>
+        <Border Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" 
+                Margin="5,5,5,0" CornerRadius="8" 
+                Background="#66F0F0F0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Content="Все книги в магазине" 
+                       Grid.Row="0"
+                       Foreground="Black" 
+                       FontSize="32" 
+                       FontFamily="Bahnschrift Condensed"
+                       Margin="10,10,10,5"/>
+
+                <DataGrid x:Name="DataGridBooks" 
+                          Grid.Row="1"
+                          Margin="10,0,10,10"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          IsReadOnly="True"
+                          RowHeight="30"
+                          FontSize="14"
+                          SelectionChanged="DataGridBooks_SelectionChanged">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" 
+                                            Binding="{Binding Id}" 
+                                            Width="50"/>
+                        <DataGridTextColumn Header="Название" 
+                                            Binding="{Binding Name}" 
+                                            Width="*" MinWidth="200"/>
+                        <DataGridTextColumn Header="Страниц" 
+                                            Binding="{Binding Pages}" 
+                                            Width="70"/>
+                        <DataGridTextColumn Header="Цена" 
+                                            Binding="{Binding Price, StringFormat={}{0:C}}" 
+                                            Width="80"/>
+                        <DataGridTextColumn Header="Дата публикации" 
+                                            Binding="{Binding PublishDate, StringFormat=dd.MM.yyyy}" 
+                                            Width="100"/>
+                        <DataGridTextColumn Header="Автор ID" 
+                                            Binding="{Binding AuthorId}" 
+                                            Width="70"/>
+                        <DataGridTextColumn Header="Тема ID" 
+                                            Binding="{Binding ThemeId}" 
+                                            Width="70"/>
+                    </DataGrid.Columns>
+
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#FF3D5AFE"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+
+                <StatusBar Grid.Row="2" Background="#4C000000">
+                    <StatusBarItem>
+                        <TextBlock x:Name="StatusBarText" 
+                                   Foreground="White" 
+                                   FontSize="12"/>
+                    </StatusBarItem>
+                    <StatusBarItem HorizontalAlignment="Right">
+                        <TextBlock x:Name="ConnectionStatus" 
+                                   Foreground="LightGreen" 
+                                   FontSize="12"
+                                   Text="Отключенный режим"/>
+                    </StatusBarItem>
+                </StatusBar>
+            </Grid>
         </Border>
 
-        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" Margin="0,48,0,338" Grid.ColumnSpan="2" />
+        <Border Grid.Column="4" Grid.Row="0" Grid.RowSpan="2" 
+                Margin="5,5,5,5" CornerRadius="8" 
+                Background="#662A2A2A">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-        <Button Grid.Column="3" Content="Добавить книгу" Margin="18,0,23,0" Background="#FE3B3B3B" Foreground="White" BorderBrush="#FFCBCACA" Grid.Row="1" Click="Button_Click" FontFamily="Bahnschrift Condensed" FontSize="16" Height="29" VerticalAlignment="Center">
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border CornerRadius="5"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
-                    </Border>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
+                <Label Content="Детали книги" 
+                       Grid.Row="0"
+                       Foreground="White" 
+                       FontSize="22" 
+                       FontFamily="Bahnschrift Condensed"
+                       Margin="10,10,10,5"/>
+
+                <Border Grid.Row="1" 
+                        Margin="10,0,10,10" 
+                        CornerRadius="8" 
+                        Background="#4C000000">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="BookDetailsPanel" 
+                                    Margin="10">
+                            <TextBlock x:Name="TxtBookDetails" 
+                                       TextWrapping="Wrap" 
+                                       Foreground="White" 
+                                       FontFamily="Consolas"
+                                       FontSize="12"
+                                       Margin="5"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Column="3" Grid.Row="0" Grid.RowSpan="2"
+            ShowsPreview="False" 
+            Width="4"
+            HorizontalAlignment="Center" 
+            Background="#4C6A6A6A"/>
     </Grid>
 </Window>
