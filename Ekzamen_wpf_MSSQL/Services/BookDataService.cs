@@ -8,7 +8,7 @@ namespace Ekzamen_wpf_MSSQL.Services
 {
     public class BookDataService
     {
-        // ============ ОТКЛЮЧЕННЫЙ РЕЖИМ (для просмотра) ============
+        //ОТКЛЮЧЕННЫЙ РЕЖИМ (для просмотра) __________________________________
 
         // Получить все книги как DataTable (отключенный режим)
         public DataTable GetAllBooksTable()
@@ -45,7 +45,7 @@ namespace Ekzamen_wpf_MSSQL.Services
             return DL.SearchBooksDisconnected(keyword);
         }
 
-        // ============ ПОДКЛЮЧЕННЫЙ РЕЖИМ (для изменений) ============
+        // ПОДКЛЮЧЕННЫЙ РЕЖИМ (для изменений) __________________________________
 
         // Получить книгу по ID (подключенный режим)
         public BookModel GetBookById(int id)
@@ -89,10 +89,18 @@ namespace Ekzamen_wpf_MSSQL.Services
         {
             return DL.UpdateBookConnected(book);
         }
+        public DataTable GetBooksByAuthor(int authorId)
+        {
+            using (var table = DL.GetAllBooksDisconnected())
+            {
+                table.DefaultView.RowFilter = $"author_id = {authorId}";
+                return table.DefaultView.ToTable();
+            }
+        }
 
-        // ============ СТАТИСТИКА И АНАЛИТИКА ============
-
-        public decimal GetAveragePrice()
+        // СТАТИСТИКА 
+        // получаем всю сумму всех книг
+        public decimal GetAllPrice()
         {
             using (var table = DL.GetAllBooksDisconnected())
             {
@@ -101,10 +109,11 @@ namespace Ekzamen_wpf_MSSQL.Services
                 {
                     total += Convert.ToDecimal(row["price"]);
                 }
-                return table.Rows.Count > 0 ? total / table.Rows.Count : 0;
+                return total;
             }
         }
 
+        // получаем всю сумму всех страниц
         public int GetTotalPages()
         {
             using (var table = DL.GetAllBooksDisconnected())
@@ -118,13 +127,6 @@ namespace Ekzamen_wpf_MSSQL.Services
             }
         }
 
-        public DataTable GetBooksByAuthor(int authorId)
-        {
-            using (var table = DL.GetAllBooksDisconnected())
-            {
-                table.DefaultView.RowFilter = $"author_id = {authorId}";
-                return table.DefaultView.ToTable();
-            }
-        }
+
     }
 }

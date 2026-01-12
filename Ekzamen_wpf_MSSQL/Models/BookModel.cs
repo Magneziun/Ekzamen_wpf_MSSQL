@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ekzamen_wpf_MSSQL.Models
 {
+    // cjplftncz nf,kbwf rybu
     [Table("books")]
     public class BookModel
     {
@@ -11,8 +12,9 @@ namespace Ekzamen_wpf_MSSQL.Models
         [Column("id")]
         public int Id { get; set; }
 
-        [Column("name")]
+        [Column("name", TypeName = "nvarchar")]
         [Required(ErrorMessage = "Название книги обязательно")]
+        [MaxLength(255)]
         public string Name { get; set; }
 
         [Column("pages")]
@@ -28,11 +30,17 @@ namespace Ekzamen_wpf_MSSQL.Models
 
         [Column("author_id")]
         [Required(ErrorMessage = "ID автора обязателен")]
+        [ForeignKey("Author")]
         public int AuthorId { get; set; }
 
         [Column("theme_id")]
         [Required(ErrorMessage = "ID темы обязателен")]
+        [ForeignKey("Theme")]
         public int ThemeId { get; set; }
+
+        // Навигационные свойства для Code First
+        public virtual Author Author { get; set; }
+        public virtual Theme Theme { get; set; }
 
         // Конструктор  для DataGrid
         public BookModel() { }

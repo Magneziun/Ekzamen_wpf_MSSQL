@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Ekzamen_wpf_MSSQL.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using Ekzamen_wpf_MSSQL.Models;
+using System.Linq;
+using System.Windows;
 
 namespace Ekzamen_wpf_MSSQL.DataLayer
 {
@@ -12,120 +14,87 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
         private static string ConnectionString { get; set; } =
             ConfigurationManager.ConnectionStrings["Company_db"].ConnectionString;
 
-        // ============ ПОДКЛЮЧЕННЫЙ РЕЖИМ ============
-        // (SqlDataReader с открытым соединением)
+        // ПОДКЛЮЧЕННЫЙ РЕЖИМ (через DbContext)
 
-        // Получение книги по ID - подключенный режим
         public static BookModel GetBookByIdConnected(int bookId)
         {
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            using (var context = new BookShopContext())
             {
-                conn.Open(); // Подключаемся к БД
+                // Вызов хранимой процедуры через Entity Framework
+                var result = context.Database.SqlQuery<BookModel>(
+                    "EXEC stp_BookById @bookId",
+                    new SqlParameter("@bookId", bookId)
+                ).FirstOrDefault();
 
-                SqlCommand cmd = new SqlCommand("stp_BookById", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@bookId", bookId);
-
-                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-                BookModel bm = null;
-
-                if (dr.Read())
-                {
-                    bm = new BookModel
-                    {
-                        Id = (int)dr[0],
-                        Name = dr[1].ToString(),
-                        Pages = (int)dr[2],
-                        Price = Convert.ToDecimal(dr[3]),
-                        PublishDate = (DateTime)dr[4],
-                        AuthorId = (int)dr[5],
-                        ThemeId = (int)dr[6]
-                    };
-                }
-                dr.Close();
-                return bm;
+                return result;
             }
         }
 
-        // ============ ОТКЛЮЧЕННЫЙ РЕЖИМ ============
-        // (DataTable/DataSet без постоянного соединения)
+        public static int AddBookConnected(string name, int pages, decimal price,
+                                          int authorId, int themeId)
+        {
+            using (var context = new BookShopContext())
+            {
+                context.Database.ExecuteSqlCommand(
+                     "EXEC stp_BookAdd @name, @pages, @price, @publish_date, @author_id, @theme_id",
+                     new SqlParameter("@name", name),
+                     new SqlParameter("@pages", pages),
+                     new SqlParameter("@price", price),
+                     new SqlParameter("@publish_date", DateTime.Today),
+                     new SqlParameter("@author_id", authorId),
+                     new SqlParameter("@theme_id", themeId)
+                 );
 
-        // Получение всех книг ( отключенный режим)
+                return context.Books.Max(b => b.Id); // Получаем последний ID
+            }
+        }
+        public static bool DeleteBookConnected(int bookId)
+        {
+            using (var context = new BookShopContext())
+            {
+                var rowsAffected = context.Database.ExecuteSqlCommand(
+                    "EXEC stp_BookDelete @id",
+                    new SqlParameter("@id", bookId)
+                );
+
+                return rowsAffected > 0;
+            }
+        }
+
+        // ОТКЛЮЧЕННЫЙ РЕЖИМ
+
         public static DataTable GetAllBooksDisconnected()
         {
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            using (var context = new BookShopContext())
             {
-                SqlDataAdapter da = new SqlDataAdapter("stp_bookALL", conn);
-                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                var books = context.Books.AsNoTracking().ToList();
 
+                // Преобразование List<BookModel> в DataTable
                 DataTable dt = new DataTable("Books");
-                da.Fill(dt); // Заполняем DataTable и закрываем соединение
+                dt.Columns.Add("id", typeof(int));
+                dt.Columns.Add("name", typeof(string));
+                dt.Columns.Add("pages", typeof(int));
+                dt.Columns.Add("price", typeof(decimal));
+                dt.Columns.Add("publish_date", typeof(DateTime));
+                dt.Columns.Add("author_id", typeof(int));
+                dt.Columns.Add("theme_id", typeof(int));
+
+                foreach (var book in books)
+                {
+                    dt.Rows.Add(
+                        book.Id,
+                        book.Name,
+                        book.Pages,
+                        book.Price,
+                        book.PublishDate,
+                        book.AuthorId,
+                        book.ThemeId
+                    );
+                }
 
                 return dt;
             }
         }
-
-        // Добавление книги - подключенный режим (транзакция)
-        public static int AddBookConnected(string name, int pages, decimal price,
-                                          int authorId, int themeId)
-        {
-            int newBookId = 0;
-
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
-            {
-                conn.Open();
-
-                using (SqlTransaction transaction = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        SqlCommand cmd = new SqlCommand("stp_BookAdd", conn, transaction);
-                        cmd.CommandType = CommandType.StoredProcedure;
-
-                        cmd.Parameters.AddWithValue("@name", name);
-                        cmd.Parameters.AddWithValue("@pages", pages);
-                        cmd.Parameters.AddWithValue("@price", price);
-                        cmd.Parameters.AddWithValue("@publish_date", DateTime.Today);
-                        cmd.Parameters.AddWithValue("@author_id", authorId);
-                        cmd.Parameters.AddWithValue("@theme_id", themeId);
-
-                        SqlParameter returnParam = new SqlParameter("@ReturnVal", SqlDbType.Int);
-                        returnParam.Direction = ParameterDirection.ReturnValue;
-                        cmd.Parameters.Add(returnParam);
-
-                        cmd.ExecuteNonQuery();
-                        newBookId = (int)returnParam.Value;
-
-                        transaction.Commit(); // Подтверждаем транзакцию
-                    }
-                    catch (Exception)
-                    {
-                        transaction.Rollback(); // Откатываем при ошибке
-                        throw;
-                    }
-                }
-            }
-
-            return newBookId;
-        }
-
-        // Удаление книги - подключенный режим
-        public static bool DeleteBookConnected(int bookId)
-        {
-            int deletedRows = 0;
-
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand("stp_BookDelete", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@id", bookId);
-                deletedRows = cmd.ExecuteNonQuery();
-            }
-
-            return deletedRows > 0;
-        }
-
         // Обновление цены - подключенный режим
         public static bool UpdateBookPriceConnected(int bookId, decimal newPrice)
         {
@@ -148,7 +117,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
             return rowsAffected > 0;
         }
 
-        // Обновление всей книги - подключенный режим
+        // Обновление всех книги - подключенный режим
         public static bool UpdateBookConnected(BookModel book)
         {
             int rowsAffected = 0;
@@ -156,7 +125,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 conn.Open();
-
+                //решил запрос прям отсда написать
                 string sql = @"
                     UPDATE books 
                     SET name = @name, 

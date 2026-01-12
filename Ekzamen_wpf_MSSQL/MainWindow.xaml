@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ekzamen_wpf_MSSQL"
         mc:Ignorable="d"
-        Title="Book Shop Manager - ADO.NET Hybrid Mode" Height="600" Width="1000" 
+        Title="Book Shop Manager - ADO.NET Hybrid Mode" Height="600" Width="1200" 
         MinHeight="500" MinWidth="900" Icon="/Assets/1878d50e9f4250acce01003049c3624c.ico" 
         WindowStartupLocation="CenterScreen">
 

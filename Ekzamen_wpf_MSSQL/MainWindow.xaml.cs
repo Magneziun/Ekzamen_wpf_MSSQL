@@ -17,22 +17,26 @@ namespace Ekzamen_wpf_MSSQL
             InitializeComponent();
             _bookService = new BookDataService();
             LoadBooks(); // Отключенный режим для просмотра
-            UpdateStats();
+            UpdateStats(); // вывод статуса
+            this.Focus(); //фокус на окно
         }
 
         // ============ ОТКЛЮЧЕННЫЙ РЕЖИМ ============
         // Загрузка книг для просмотра (без соединения в откл режиме)
         private void LoadBooks()
         {
+            //обработка исключения
             try
             {
                 // Используем отключенный режим
                 ConnectionStatus.Text = "Отключенный режим";
                 var books = _bookService.GetAllBooksList();
-
+                // заполняем ДатуГрид книгами и отоброжаем статус
                 DataGridBooks.ItemsSource = books;
                 StatusBarText.Text = $"Загружено {books.Count} книг (отключенный режим)";
 
+
+                //если книг нет чтобы ничего не выделялось
                 if (books.Count > 0)
                 {
                     DataGridBooks.SelectedIndex = 0;
@@ -50,7 +54,7 @@ namespace Ekzamen_wpf_MSSQL
             try
             {
                 var books = _bookService.GetAllBooksList();
-                var avgPrice = _bookService.GetAveragePrice();
+                var avgPrice = _bookService.GetAllPrice();
                 var totalPages = _bookService.GetTotalPages();
 
                 TxtTotalBooks.Text = $"Всего книг: {books.Count}";
@@ -110,13 +114,14 @@ namespace Ekzamen_wpf_MSSQL
 
         // ============ ОБРАБОТЧИКИ КНОПОК ============
 
+        //кнопка обновить
         private void BtnRefresh_Click(object sender, RoutedEventArgs e)
         {
             LoadBooks();
             UpdateStats();
             StatusBarText.Text = "Список книг обновлен";
         }
-
+        //кнопка добавить
         private void BtnAddBook_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -171,14 +176,17 @@ namespace Ekzamen_wpf_MSSQL
             }
         }
 
+        //кнопка удалить
         private void BtnDeleteBook_Click(object sender, RoutedEventArgs e)
         {
+            
             if (_selectedBook == null)
             {
                 ShowError("Выберите книгу для удаления");
                 return;
             }
 
+            //подтверждение удаления
             var result = MessageBox.Show(
                 $"Вы уверены, что хотите удалить книгу:\n'{_selectedBook.Name}'?",
                 "Подтверждение удаления",
