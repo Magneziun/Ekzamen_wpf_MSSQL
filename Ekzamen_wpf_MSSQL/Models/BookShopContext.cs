@@ -10,7 +10,6 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
             // Отключаем инициализатор базы данных
             Database.SetInitializer<BookShopContext>(null);
 
-            // Database.SetInitializer(new CreateDatabaseIfNotExists<BookShopContext>());
         }
 
         public DbSet<BookModel> Books { get; set; }

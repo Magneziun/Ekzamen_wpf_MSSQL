@@ -1,33 +1,69 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Ekzamen_wpf_MSSQL
 {
-    /// <summary>
-    /// Логика взаимодействия для EditPrice.xaml
-    /// </summary>
     public partial class EditPrice : Window
     {
-        public EditPrice()
+        public decimal NewPrice { get; private set; }
+        private decimal _currentPrice;
+
+        public EditPrice(decimal currentPrice)
         {
-            this.IsEnabled = true;
             InitializeComponent();
+            _currentPrice = currentPrice;
+            EditPriceTexBox.Text = currentPrice.ToString();
+            EditPriceTexBox.Focus();
+            EditPriceTexBox.SelectAll();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (ValidatePrice())
+            {
+                this.DialogResult = true;
+                this.Close();
+            }
+        }
 
+        private bool ValidatePrice()
+        {
+            if (string.IsNullOrWhiteSpace(EditPriceTexBox.Text))
+            {
+                MessageBox.Show("Введите новую цену", "Ошибка",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+                EditPriceTexBox.Focus();
+                return false;
+            }
+
+            if (!decimal.TryParse(EditPriceTexBox.Text, out decimal newPrice) || newPrice <= 0)
+            {
+                MessageBox.Show("Введите корректную цену (положительное число)", "Ошибка",
+                              MessageBoxButton.OK, MessageBoxImage.Error);
+                EditPriceTexBox.Focus();
+                EditPriceTexBox.SelectAll();
+                return false;
+            }
+
+            NewPrice = newPrice;
+            return true;
+        }
+
+        private void EditPriceTexBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                if (ValidatePrice())
+                {
+                    this.DialogResult = true;
+                    this.Close();
+                }
+            }
+            else if (e.Key == System.Windows.Input.Key.Escape)
+            {
+                this.DialogResult = false;
+                this.Close();
+            }
         }
     }
 }

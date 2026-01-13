@@ -44,7 +44,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
                      new SqlParameter("@author_id", authorId),
                      new SqlParameter("@theme_id", themeId)
                  );
-
+                
                 return context.Books.Max(b => b.Id); // Получаем последний ID
             }
         }
@@ -96,25 +96,37 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
             }
         }
         // Обновление цены - подключенный режим
+
         public static bool UpdateBookPriceConnected(int bookId, decimal newPrice)
         {
-            int rowsAffected = 0;
-
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            try
             {
-                conn.Open();
-
-                using (SqlCommand cmd = new SqlCommand("stp_BookUpdate", conn))
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Id", bookId);
-                    cmd.Parameters.AddWithValue("@Price", newPrice);
+                    conn.Open();
 
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    using (SqlCommand cmd = new SqlCommand("stp_BookUpdate", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@Id", bookId);
+                        cmd.Parameters.AddWithValue("@Price", newPrice);
+
+                        cmd.ExecuteNonQuery();
+
+                        // Если не было исключения - считаем операцию успешной
+                        return true;
+                    }
                 }
             }
-
-            return rowsAffected > 0;
+            catch (Exception ex)
+            {
+                // Для отладки можно посмотреть, какая именно ошибка
+                MessageBox.Show($"Ошибка при обновлении цены книги: {ex.Message}",
+                               "Ошибка БД",
+                               MessageBoxButton.OK,
+                               MessageBoxImage.Error);
+                return false;
+            }
         }
 
         // Обновление всех книги - подключенный режим

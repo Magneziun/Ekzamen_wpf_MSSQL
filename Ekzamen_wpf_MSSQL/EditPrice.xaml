@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ekzamen_wpf_MSSQL"
         mc:Ignorable="d"
-        Title="EditPrice" Height="110" Width="401" WindowStartupLocation="CenterScreen">
+        Title="EditPrice" Height="110" Width="403" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Window.Background>
         <ImageBrush ImageSource="/Assets/загруженное.jpg">
             <ImageBrush.RelativeTransform>
@@ -19,7 +19,18 @@
         </ImageBrush>
     </Window.Background>
     <Grid>
-        <TextBox x:Name="EditPriceTexBox" HorizontalAlignment="Left" Margin="167,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="222" Height="21" Foreground="White" FontSize="18" SelectionBrush="White" Text="___" Panel.ZIndex="4" FontFamily="Bahnschrift Condensed">
+        <TextBox x:Name="EditPriceTexBox"
+                 HorizontalAlignment="Left"
+                 Margin="167,24,0,0" 
+                 TextWrapping="Wrap" 
+                 VerticalAlignment="Top" 
+                 Width="222" Height="21"
+                 Foreground="White"
+                 FontSize="18"
+                 SelectionBrush="White" 
+                 Text="___" Panel.ZIndex="4" 
+                 FontFamily="Bahnschrift Condensed"
+                 KeyDown="EditPriceTexBox_KeyDown">
             <TextBox.Template>
                 <ControlTemplate TargetType="TextBox">
                     <Border CornerRadius="5" 
@@ -35,10 +46,7 @@
         <Image HorizontalAlignment="Left" Height="100" Margin="457,284,0,0" VerticalAlignment="Top" Width="100"/>
         <Button x:Name="EditPriceBut" Content="Изменить
                 " 
-                HorizontalAlignment="Left" 
-                Margin="278,62,0,0" 
-                VerticalAlignment="Top"
-                Width="111" Height="20"
+                Margin="278,62,14,18"
                 Background="#FE3B3B3B" Foreground="White" FontFamily="Bahnschrift Condensed" FontSize="13" HorizontalContentAlignment="Left" Click="Button_Click">
             <Button.Template>
                 <ControlTemplate TargetType="Button">

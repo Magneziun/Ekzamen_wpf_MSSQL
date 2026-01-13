@@ -230,28 +230,25 @@ namespace Ekzamen_wpf_MSSQL
         //кнопка измененние цены
         private void BtnUpdatePrice_Click(object sender, RoutedEventArgs e)
         {
-            //если книга не выбрана проверка
             if (_selectedBook == null)
             {
-                
                 ShowError("Выберите книгу для изменения цены");
                 return;
             }
 
-            // Диалог для ввода новой цены
-            var dialog = new InputDialog(
-                "Изменение цены",
-                $"Введите новую цену для книги '{_selectedBook.Name}':",
-                _selectedBook.Price.ToString());
+            var editPriceWindow = new EditPrice(_selectedBook.Price);
+            editPriceWindow.Title = $"Изменение цены: {_selectedBook.Name}";
 
-            if (dialog.ShowDialog() == true)
+            if (editPriceWindow.ShowDialog() == true)
             {
-                if (decimal.TryParse(dialog.Answer, out decimal newPrice) && newPrice > 0)
+                decimal newPrice = editPriceWindow.NewPrice;
+
+                if (newPrice > 0 && newPrice != _selectedBook.Price)
                 {
                     try
                     {
                         // Используем подключенный режим для обновления
-                        ConnectionStatus.Text = "<- Подключенный режим";
+                        ConnectionStatus.Text = "Подключенный режим";
 
                         bool success = _bookService.UpdateBookPrice(_selectedBook.Id, newPrice);
 
@@ -259,7 +256,7 @@ namespace Ekzamen_wpf_MSSQL
                         {
                             LoadBooks();
                             UpdateStats();
-                            StatusBarText.Text = $" Цена книги обновлена на {newPrice:C}";
+                            StatusBarText.Text = $"Цена книги '{_selectedBook.Name}' обновлена на {newPrice:C}";
                             ShowMessage($"Цена успешно изменена с {_selectedBook.Price:C} на {newPrice:C}");
                         }
                         else
@@ -278,7 +275,7 @@ namespace Ekzamen_wpf_MSSQL
                 }
                 else
                 {
-                    ShowError("Введите корректную цену");
+                    ShowError("Новая цена должна отличаться от текущей");
                 }
             }
         }
