@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Ekzamen_wpf_MSSQL.Services;
+using System.Data.Linq; // Добавляем для LINQ to SQL
 using Ekzamen_wpf_MSSQL.Models;
 using System.Linq;
 
@@ -9,34 +10,42 @@ namespace Ekzamen_wpf_MSSQL
 {
     public partial class MainWindow : Window
     {
+        // Сервис для работы с данными книг
         private BookDataService _bookService;
+        // Выбранная книга в DataGrid
         private BookModel _selectedBook;
 
+        // Конструктор главного окна
         public MainWindow()
         {
             InitializeComponent();
+            // Создаем экземпляр сервиса для работы с книгами
             _bookService = new BookDataService();
-            LoadBooks(); // Отключенный режим для просмотра
-            UpdateStats(); // вывод статуса
-            this.Focus(); //фокус на окно
+            // Загружаем книги при запуске (отключенный режим)
+            LoadBooks();
+            // Обновляем статистику
+            UpdateStats();
+            // Устанавливаем фокус на окно
+            this.Focus();
         }
 
-        // ============ ОТКЛЮЧЕННЫЙ РЕЖИМ ============
-        // Загрузка книг для просмотра (без соединения в откл режиме)
+        // ОТКЛЮЧЕННЫЙ РЕЖИМ
+        // Загрузка книг для просмотра (без постоянного соединения)
         private void LoadBooks()
         {
-            //обработка исключения
+            // Обработка исключений при загрузке
             try
             {
-                // Используем отключенный режим
+                // Показываем текущий режим работы
                 ConnectionStatus.Text = "Отключенный режим";
+                // Получаем все книги в виде списка
                 var books = _bookService.GetAllBooksList();
-                // заполняем ДатуГрид книгами и отоброжаем статус
+                // Заполняем DataGrid книгами
                 DataGridBooks.ItemsSource = books;
+                // Обновляем статус в статус-баре
                 StatusBarText.Text = $"Загружено {books.Count} книг (отключенный режим)";
 
-
-                //если книг нет чтобы ничего не выделялось
+                // Если книги есть, выделяем первую
                 if (books.Count > 0)
                 {
                     DataGridBooks.SelectedIndex = 0;
@@ -44,22 +53,27 @@ namespace Ekzamen_wpf_MSSQL
             }
             catch (Exception ex)
             {
+                // Показываем ошибку если чтото пошло не так
                 ShowError($"Ошибка загрузки книг: {ex.Message}");
             }
         }
 
-        // Обновление статистики
+        // Обновление статистики в правой панели
         private void UpdateStats()
         {
             try
             {
+                // Получаем данные для статистики
                 var books = _bookService.GetAllBooksList();
-                var avgPrice = _bookService.GetAllPrice();
+                var allPrice = _bookService.GetAllPrice();
                 var totalPages = _bookService.GetTotalPages();
+                var avgPrice = _bookService.GetAvgPrice();
 
+                // Обновляем текстовые блоки со статистикой
                 TxtTotalBooks.Text = $"Всего книг: {books.Count}";
-                TxtAvgPrice.Text = $"Средняя цена: {avgPrice:C}";
+                TxtAallPrice.Text = $"Общая стоимость: {allPrice:C}";
                 TxtTotalPages.Text = $"Всего страниц: {totalPages:#,##0}";
+                TxtAvgPrice.Text = $"Средняя цена: {avgPrice:C}";
             }
             catch (Exception ex)
             {
@@ -67,16 +81,18 @@ namespace Ekzamen_wpf_MSSQL
             }
         }
 
-        // Поиск книг
+        // Поиск книг по ключевому слову
         private void SearchBooks(string keyword)
         {
             try
             {
+                // Фильтруем книги по названию или ID
                 var books = _bookService.GetAllBooksList()
                     .Where(b => b.Name.ToLower().Contains(keyword.ToLower()) ||
-                                b.Id.ToString().Contains(keyword))
+                                b.Id.ToString().Contains(keyword)) //LINQ to Objects
                     .ToList();
 
+                // Обновляем DataGrid отфильтрованными книгами
                 DataGridBooks.ItemsSource = books;
                 StatusBarText.Text = $"Найдено {books.Count} книг по запросу '{keyword}'";
             }
@@ -86,11 +102,11 @@ namespace Ekzamen_wpf_MSSQL
             }
         }
 
-        // ============ ПОДКЛЮЧЕННЫЙ РЕЖИМ ============
-        // Для операций изменения данных
-
+        // ПОДКЛЮЧЕННЫЙ РЕЖИМ 
+        // Обработчик изменения выбранной книги в DataGrid
         private void DataGridBooks_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Если выбрана книга, сохраняем ее и показываем детали
             if (DataGridBooks.SelectedItem is BookModel selectedBook)
             {
                 _selectedBook = selectedBook;
@@ -98,6 +114,7 @@ namespace Ekzamen_wpf_MSSQL
             }
         }
 
+        // Показ детальной информации о книге в правой панели
         private void ShowBookDetails(BookModel book)
         {
             TxtBookDetails.Text =
@@ -112,27 +129,29 @@ namespace Ekzamen_wpf_MSSQL
                 $"Цена за страницу: {(book.Price / book.Pages):C}";
         }
 
-        // ============ ОБРАБОТЧИКИ КНОПОК ============
+        // ОБРАБОТЧИКИ КНОПОК 
 
-        //кнопка обновить
+        // Кнопка Обновит - перезагружает список книг
         private void BtnRefresh_Click(object sender, RoutedEventArgs e)
         {
             LoadBooks();
             UpdateStats();
             StatusBarText.Text = "Список книг обновлен";
         }
-        //кнопка добавить
+
+        // Кнопка Добавить - открывает окно добавления новой книги
         private void BtnAddBook_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Используем подключенный режим для добавления
+                // Переходим в подключенный режим для добавления
                 ConnectionStatus.Text = "Подключенный режим";
 
+                // Открываем окно добавления книги
                 var addWindow = new AddBookMenu();
                 if (addWindow.ShowDialog() == true)
                 {
-                    // Создаем новую книгу переменый new book и заполняем все поля из окна добавления книги
+                    // Создаем новую книгу из данных окна
                     var newBook = new BookModel
                     {
                         Name = addWindow.Name.Text,
@@ -143,18 +162,17 @@ namespace Ekzamen_wpf_MSSQL
                         ThemeId = int.Parse(addWindow.Theme_ID.Text)
                     };
 
-                    // проверка на правильность
-
+                    // Проверяем валидность данных
                     if (!newBook.Validate(out string error))
                     {
                         ShowError(error);
                         return;
                     }
 
-                    // Добавляем книгу (подключенный режим)
+                    // Добавляем книгу в БД (подключенный режим)
                     int newId = _bookService.AddBook(newBook);
 
-                    // Обновляем список (отключенный режим)
+                    // Обновляем список книг и статистику
                     LoadBooks();
                     UpdateStats();
 
@@ -172,21 +190,22 @@ namespace Ekzamen_wpf_MSSQL
             }
             finally
             {
+                // Возвращаемся в отключенный режим
                 ConnectionStatus.Text = "Отключенный режим";
             }
         }
 
-        //кнопка удалить
+        // Кнопка Удалить - удаляет выбранную книгу
         private void BtnDeleteBook_Click(object sender, RoutedEventArgs e)
         {
-            
+            // Проверяем, выбрана ли книга
             if (_selectedBook == null)
             {
                 ShowError("Выберите книгу для удаления");
                 return;
             }
 
-            //подтверждение удаления
+            // Подтверждение удаления через MessageBox
             var result = MessageBox.Show(
                 $"Вы уверены, что хотите удалить книгу:\n'{_selectedBook.Name}'?",
                 "Подтверждение удаления",
@@ -197,13 +216,15 @@ namespace Ekzamen_wpf_MSSQL
             {
                 try
                 {
-                    // Используем подключенный режим для удаления
+                    // Переходим в подключенный режим для удаления
                     ConnectionStatus.Text = "Подключенный режим";
 
+                    // Пытаемся удалить книгу
                     bool success = _bookService.DeleteBook(_selectedBook.Id);
 
                     if (success)
                     {
+                        // Обновляем интерфейс после удаления
                         LoadBooks();
                         UpdateStats();
                         StatusBarText.Text = $"Книга '{_selectedBook.Name}' удалена";
@@ -227,7 +248,7 @@ namespace Ekzamen_wpf_MSSQL
             }
         }
 
-        //кнопка измененние цены
+        // Кнопка Изменить цену - открывает окно редактирования цены
         private void BtnUpdatePrice_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedBook == null)
@@ -236,6 +257,7 @@ namespace Ekzamen_wpf_MSSQL
                 return;
             }
 
+            // Открываем окно редактирования цены с текущей ценой
             var editPriceWindow = new EditPrice(_selectedBook.Price);
             editPriceWindow.Title = $"Изменение цены: {_selectedBook.Name}";
 
@@ -243,17 +265,19 @@ namespace Ekzamen_wpf_MSSQL
             {
                 decimal newPrice = editPriceWindow.NewPrice;
 
+                // Проверяем, что цена изменилась и корректна
                 if (newPrice > 0 && newPrice != _selectedBook.Price)
                 {
                     try
                     {
-                        // Используем подключенный режим для обновления
                         ConnectionStatus.Text = "Подключенный режим";
 
+                        // Обновляем цену в БД
                         bool success = _bookService.UpdateBookPrice(_selectedBook.Id, newPrice);
 
                         if (success)
                         {
+                            // Обновляем интерфейс
                             LoadBooks();
                             UpdateStats();
                             StatusBarText.Text = $"Цена книги '{_selectedBook.Name}' обновлена на {newPrice:C}";
@@ -280,14 +304,17 @@ namespace Ekzamen_wpf_MSSQL
             }
         }
 
+        // Обработчик изменения текста в поле поиска
         private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Если поле поиска пустое, загружаем все книги
             if (string.IsNullOrWhiteSpace(TxtSearch.Text))
             {
                 LoadBooks();
             }
         }
 
+        // Кнопка Поиск - выполняет поиск по введенному тексту
         private void BtnSearch_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(TxtSearch.Text))
@@ -296,83 +323,18 @@ namespace Ekzamen_wpf_MSSQL
             }
         }
 
-        // ============ ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ============
-
+        //ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
+        // Показ ошибки в статус-баре и MessageBox
         private void ShowError(string message)
         {
             StatusBarText.Text = $"{message}";
             MessageBox.Show(message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        // Показ сообщения в статус-баре
         private void ShowMessage(string message)
         {
             StatusBarText.Text = $"{message}";
-        }
-    }
-
-    // Класс для диалога ввода изменения цены (не работает)
-    public class InputDialog
-    {
-        public string Answer { get; set; }
-
-        public InputDialog(string title, string prompt, string defaultValue = "")
-        {
-            var dialog = new Window
-            {
-                Title = title,
-                Width = 300,
-                Height = 150,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-
-            var stackPanel = new StackPanel { Margin = new Thickness(10) };
-
-            stackPanel.Children.Add(new TextBlock
-            {
-                Text = prompt,
-                Margin = new Thickness(0, 0, 0, 10)
-            });
-
-            var textBox = new TextBox
-            {
-                Text = defaultValue,
-                Margin = new Thickness(0, 0, 0, 10)
-            };
-            stackPanel.Children.Add(textBox);
-
-            var buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
-
-            var okButton = new Button
-            {
-                Content = "OK",
-                Width = 75,
-                Margin = new Thickness(0, 0, 10, 0),
-                IsDefault = true
-            };
-            okButton.Click += (sender, e) =>
-            {
-                Answer = textBox.Text;
-                dialog.DialogResult = true;
-            };
-
-            var cancelButton = new Button
-            {
-                Content = "Cancel",
-                Width = 75,
-                IsCancel = true
-            };
-
-            buttonPanel.Children.Add(okButton);
-            buttonPanel.Children.Add(cancelButton);
-            stackPanel.Children.Add(buttonPanel);
-
-            dialog.Content = stackPanel;
-            dialog.ShowDialog();
-        }
-
-        public bool ShowDialog()
-        {
-            return false; // Реализация в конструкторе
         }
     }
 }

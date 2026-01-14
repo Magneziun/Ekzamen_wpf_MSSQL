@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ekzamen_wpf_MSSQL.Models
 {
-    // cjplftncz nf,kbwf rybu
+    // Модель книги для Entity Framework
     [Table("books")]
     public class BookModel
     {
@@ -30,22 +30,22 @@ namespace Ekzamen_wpf_MSSQL.Models
 
         [Column("author_id")]
         [Required(ErrorMessage = "ID автора обязателен")]
-        [ForeignKey("Author")]
+        [ForeignKey("Author")] // Внешний ключ к таблице authors
         public int AuthorId { get; set; }
 
         [Column("theme_id")]
         [Required(ErrorMessage = "ID темы обязателен")]
-        [ForeignKey("Theme")]
+        [ForeignKey("Theme")] // Внешний ключ к таблице themes
         public int ThemeId { get; set; }
 
-        // Навигационные свойства для Code First
+        // Навигационные свойства для Code First (ленивая загрузка)
         public virtual Author Author { get; set; }
         public virtual Theme Theme { get; set; }
 
-        // Конструктор  для DataGrid
+        // Конструктор по умолчанию для DataGrid и EF
         public BookModel() { }
 
-        // тут короче определяем через конструктор но можно и без
+        // Конструктор с параметрами для удобного создания объектов
         public BookModel(string name, int pages, decimal price,
                         int authorId, int themeId, DateTime? publishDate = null)
         {
@@ -54,14 +54,15 @@ namespace Ekzamen_wpf_MSSQL.Models
             Price = price;
             AuthorId = authorId;
             ThemeId = themeId;
-            PublishDate = DateTime.Today; 
+            PublishDate = DateTime.Today; // По умолчанию сегодняшняя дата
         }
 
-        // Создаем метод чтобы потом проверять на валидность данных которые введем
+        // Метод валидации данных книги
         public bool Validate(out string errorMessage)
         {
             errorMessage = string.Empty;
 
+            // Проверяем все поля на корректность
             if (string.IsNullOrWhiteSpace(Name))
                 errorMessage = "Название книги обязательно";
             else if (Pages <= 0)
@@ -73,22 +74,8 @@ namespace Ekzamen_wpf_MSSQL.Models
             else if (ThemeId <= 0)
                 errorMessage = "ID темы должен быть положительным";
 
+            // Возвращаем true если ошибок нет
             return string.IsNullOrEmpty(errorMessage);
-        }
-
-        // клонируем чтобы использовать вне
-        public BookModel Clone()
-        {
-            return new BookModel
-            {
-                Id = this.Id,
-                Name = this.Name,
-                Pages = this.Pages,
-                Price = this.Price,
-                PublishDate = this.PublishDate,
-                AuthorId = this.AuthorId,
-                ThemeId = this.ThemeId
-            };
         }
     }
 }

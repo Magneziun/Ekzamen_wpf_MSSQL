@@ -6,9 +6,10 @@ using Ekzamen_wpf_MSSQL.Models;
 
 namespace Ekzamen_wpf_MSSQL.Services
 {
+    // Сервисный класс для работы с книгами (фасад для DL)
     public class BookDataService
     {
-        //ОТКЛЮЧЕННЫЙ РЕЖИМ (для просмотра) __________________________________
+        // ОТКЛЮЧЕННЫЙ РЕЖИМ (для просмотра) __________________________________
 
         // Получить все книги как DataTable (отключенный режим)
         public DataTable GetAllBooksTable()
@@ -22,6 +23,7 @@ namespace Ekzamen_wpf_MSSQL.Services
             var books = new List<BookModel>();
             var table = DL.GetAllBooksDisconnected();
 
+            // Конвертируем DataRow в объекты BookModel
             foreach (DataRow row in table.Rows)
             {
                 books.Add(new BookModel
@@ -39,7 +41,7 @@ namespace Ekzamen_wpf_MSSQL.Services
             return books;
         }
 
-        // Поиск книг (отключенный режим)
+        // Поиск книг по ключевому слову (отключенный режим)
         public DataTable SearchBooks(string keyword)
         {
             return DL.SearchBooksDisconnected(keyword);
@@ -53,7 +55,7 @@ namespace Ekzamen_wpf_MSSQL.Services
             return DL.GetBookByIdConnected(id);
         }
 
-        // Добавить книгу (подключенный режим)
+        // Добавить книгу через объект (подключенный режим)
         public int AddBook(BookModel book)
         {
             return DL.AddBookConnected(
@@ -72,7 +74,7 @@ namespace Ekzamen_wpf_MSSQL.Services
             return DL.AddBookConnected(name, pages, price, authorId, themeId);
         }
 
-        // Удалить книгу (подключенный режим)
+        // Удалить книгу по ID (подключенный режим)
         public bool DeleteBook(int id)
         {
             return DL.DeleteBookConnected(id);
@@ -89,17 +91,21 @@ namespace Ekzamen_wpf_MSSQL.Services
         {
             return DL.UpdateBookConnected(book);
         }
+
+        // Получить книги по автору (фильтрация в памяти)
         public DataTable GetBooksByAuthor(int authorId)
         {
             using (var table = DL.GetAllBooksDisconnected())
             {
+                // Применяем фильтр по author_id
                 table.DefaultView.RowFilter = $"author_id = {authorId}";
                 return table.DefaultView.ToTable();
             }
         }
 
-        // СТАТИСТИКА 
-        // получаем всю сумму всех книг
+        // СТАТИСТИКА ##########################################################
+
+        // Общая стоимость всех книг
         public decimal GetAllPrice()
         {
             using (var table = DL.GetAllBooksDisconnected())
@@ -113,7 +119,7 @@ namespace Ekzamen_wpf_MSSQL.Services
             }
         }
 
-        // получаем всю сумму всех страниц
+        // Общее количество страниц во всех книгах
         public int GetTotalPages()
         {
             using (var table = DL.GetAllBooksDisconnected())
@@ -127,6 +133,23 @@ namespace Ekzamen_wpf_MSSQL.Services
             }
         }
 
+        // Средняя цена книги
+        public decimal GetAvgPrice()
+        {
+            using (var table = DL.GetAllBooksDisconnected())
+            {
+                if (table.Rows.Count == 0)
+                    return 0;
 
+                decimal total = 0;
+                foreach (DataRow row in table.Rows)
+                {
+                    total += Convert.ToDecimal(row["price"]);
+                }
+
+                // Делим общую сумму на количество книг
+                return total / table.Rows.Count;
+            }
+        }
     }
 }

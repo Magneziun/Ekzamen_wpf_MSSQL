@@ -5,39 +5,41 @@ namespace Ekzamen_wpf_MSSQL
 {
     public partial class AddBookMenu : Window
     {
+        // Конструктор окна добавления книги
         public AddBookMenu()
         {
             InitializeComponent();
+            // Включаем окно
             this.IsEnabled = true;
-            // Устанавливаем текущую дату как значение по умолчанию
-            var today = DateTime.Today;
-
-            // Устанавливаем фокус
+            // Устанавливаем фокус на поле ввода названия
             Name.Focus();
         }
 
+        // Обработчик нажатия кнопок
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //если нажали добавить 
+            // Если нажали "Добавить"
             if (sender == AddButt)
             {
-                // Валидация данных
+                // Проверяем введенные данные
                 if (!ValidateInputs())
                     return;
 
+                // Закрываем окно с результатом true
                 this.DialogResult = true;
                 this.Close();
             }
-            //если нажали добавить (просто закрывает окошко)
+            // Если нажали "Выйти" (отмена)
             else if (sender == ExitBut)
             {
                 this.Close();
             }
         }
-        //проверки на вводимые данные в окне где мы книгу новую делаем
+
+        // Проверка введенных данных на корректность
         private bool ValidateInputs()
         {
-            // Проверка названия
+            // Проверка названия книги
             if (string.IsNullOrWhiteSpace(Name.Text))
             {
                 MessageBox.Show("Введите название книги", "Ошибка",
@@ -46,7 +48,7 @@ namespace Ekzamen_wpf_MSSQL
                 return false;
             }
 
-            // Проверка количества страниц
+            // Проверка количества страниц (должно быть положительное число)
             if (!int.TryParse(Pages_Count.Text, out int pages) || pages <= 0)
             {
                 MessageBox.Show("Введите корректное количество страниц", "Ошибка",
@@ -55,7 +57,7 @@ namespace Ekzamen_wpf_MSSQL
                 return false;
             }
 
-            // Проверка цены 
+            // Проверка цены (должна быть положительной)
             if (!decimal.TryParse(Price.Text, out decimal price) || price <= 0)
             {
                 MessageBox.Show("Введите корректную цену", "Ошибка",
@@ -64,7 +66,7 @@ namespace Ekzamen_wpf_MSSQL
                 return false;
             }
 
-            // Проверка ID автора
+            // Проверка ID автора (должен быть положительным числом)
             if (!int.TryParse(AuthorID.Text, out int authorId) || authorId <= 0)
             {
                 MessageBox.Show("Введите корректный ID автора (положительное число)", "Ошибка",
@@ -73,7 +75,7 @@ namespace Ekzamen_wpf_MSSQL
                 return false;
             }
 
-            // Проверка ID темы
+            // Проверка ID темы (должен быть положительным числом)
             if (!int.TryParse(Theme_ID.Text, out int themeId) || themeId <= 0)
             {
                 MessageBox.Show("Введите корректный ID темы (положительное число)", "Ошибка",
@@ -82,6 +84,7 @@ namespace Ekzamen_wpf_MSSQL
                 return false;
             }
 
+            // Все проверки пройдены
             return true;
         }
     }

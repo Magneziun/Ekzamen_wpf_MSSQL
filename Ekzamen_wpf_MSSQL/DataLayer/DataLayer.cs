@@ -11,18 +11,20 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
 {
     public class DL
     {
+        // Строка подключения к БД из конфига
         private static string ConnectionString { get; set; } =
             ConfigurationManager.ConnectionStrings["Company_db"].ConnectionString;
 
-        // ПОДКЛЮЧЕННЫЙ РЕЖИМ (через DbContext)
+        // ПОДКЛЮЧЕННЫЙ РЕЖИМ (через DbContext) ################################
 
+        // Получаем книгу по ID через хранимую процедуру
         public static BookModel GetBookByIdConnected(int bookId)
         {
             using (var context = new BookShopContext())
             {
                 // Вызов хранимой процедуры через Entity Framework
-                var result = context.Database.SqlQuery<BookModel>(
-                    "EXEC stp_BookById @bookId",
+                var result = context.Database.SqlQuery<BookModel>( 
+                    "EXEC stp_BookById @bookId",  
                     new SqlParameter("@bookId", bookId)
                 ).FirstOrDefault();
 
@@ -30,6 +32,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
             }
         }
 
+        // Добавляем книгу через хранимую процедуру
         public static int AddBookConnected(string name, int pages, decimal price,
                                           int authorId, int themeId)
         {
@@ -44,10 +47,13 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
                      new SqlParameter("@author_id", authorId),
                      new SqlParameter("@theme_id", themeId)
                  );
-                
-                return context.Books.Max(b => b.Id); // Получаем последний ID
+
+                // Получаем последний ID (максимальный в таблице)
+                return context.Books.Max(b => b.Id); //LINQ пример с агрегатной функцией
             }
         }
+
+        // Удаляем книгу через хранимую процедуру
         public static bool DeleteBookConnected(int bookId)
         {
             using (var context = new BookShopContext())
@@ -57,19 +63,22 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
                     new SqlParameter("@id", bookId)
                 );
 
+                // Возвращаем true если затронули хотя бы одну строку
                 return rowsAffected > 0;
             }
         }
 
-        // ОТКЛЮЧЕННЫЙ РЕЖИМ
+        // ОТКЛЮЧЕННЫЙ РЕЖИМ ###################################################
 
+        // Получаем все книги в виде DataTable (отключенный режим)
         public static DataTable GetAllBooksDisconnected()
         {
             using (var context = new BookShopContext())
             {
+                // AsNoTracking() не отслеживаем изменения
                 var books = context.Books.AsNoTracking().ToList();
 
-                // Преобразование List<BookModel> в DataTable
+                // Создаем DataTable и добавляем колонки
                 DataTable dt = new DataTable("Books");
                 dt.Columns.Add("id", typeof(int));
                 dt.Columns.Add("name", typeof(string));
@@ -79,6 +88,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
                 dt.Columns.Add("author_id", typeof(int));
                 dt.Columns.Add("theme_id", typeof(int));
 
+                // Заполняем циклом DataTable данными из списка книг
                 foreach (var book in books)
                 {
                     dt.Rows.Add(
@@ -95,8 +105,8 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
                 return dt;
             }
         }
-        // Обновление цены - подключенный режим
 
+        // Обновление цены - подключенный режим через 
         public static bool UpdateBookPriceConnected(int bookId, decimal newPrice)
         {
             try
@@ -105,6 +115,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
                 {
                     conn.Open();
 
+                    // Вызываем хранимку обновления цены
                     using (SqlCommand cmd = new SqlCommand("stp_BookUpdate", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
@@ -113,14 +124,14 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
 
                         cmd.ExecuteNonQuery();
 
-                        // Если не было исключения - считаем операцию успешной
+                        // Если не было исключения то считаем операцию успешной
                         return true;
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Для отладки можно посмотреть, какая именно ошибка
+                // Показываем ошибку 
                 MessageBox.Show($"Ошибка при обновлении цены книги: {ex.Message}",
                                "Ошибка БД",
                                MessageBoxButton.OK,
@@ -129,7 +140,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
             }
         }
 
-        // Обновление всех книги - подключенный режим
+        // Обновление всех полей книги - подключенный режим
         public static bool UpdateBookConnected(BookModel book)
         {
             int rowsAffected = 0;
@@ -137,7 +148,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 conn.Open();
-                //решил запрос прям отсда написать
+                // SQL запрос для обновления всех полей книги
                 string sql = @"
                     UPDATE books 
                     SET name = @name, 
@@ -150,6 +161,7 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
+                    // Добавляем параметры 
                     cmd.Parameters.AddWithValue("@id", book.Id);
                     cmd.Parameters.AddWithValue("@name", book.Name);
                     cmd.Parameters.AddWithValue("@pages", book.Pages);
@@ -162,14 +174,16 @@ namespace Ekzamen_wpf_MSSQL.DataLayer
                 }
             }
 
+            // Возвращаем true если обновили запись
             return rowsAffected > 0;
         }
 
-        // Поиск книг - отключенный режим
+        // Поиск книг по названию - отключенный режим
         public static DataTable SearchBooksDisconnected(string keyword)
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
+                // SQL запрос с LIKE для поиска по части названия
                 string sql = "SELECT * FROM books WHERE name LIKE @keyword";
                 SqlDataAdapter da = new SqlDataAdapter(sql, conn);
                 da.SelectCommand.Parameters.AddWithValue("@keyword", $"%{keyword}%");
